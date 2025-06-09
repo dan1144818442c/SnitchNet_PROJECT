@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
 {
-    static class StaticFunc
+    // Renamed the class to avoid conflict with another definition of 'StaticFunc' in the same namespace.  
+    static class StaticFuncHelper
     {
         public static bool check_name(string first_name, string last_name)
         {
@@ -21,15 +22,9 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
                     exists = true;
                     break;
                 }
-
             }
-            if (exists)
-            {
-                return true;
-            }
-            return false;
+            return exists;
         }
-
 
         public static bool check_secet_code(string secret_code)
         {
@@ -43,16 +38,11 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
                     break;
                 }
             }
-            if (exists)
-            {
-                return true;
-            }
-            return false;
+            return exists;
         }
 
         public static (string firstName, string lastName) FindName_InText(string text)
         {
-
             Regex regex = new Regex(@"\b[A-Z][a-z]+\s[A-Z][a-z]+\b");
             Match match = regex.Match(text);
 
@@ -66,7 +56,6 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
             {
                 return ("", "");
             }
-
         }
 
         public static bool check_have_id(int id)
@@ -81,13 +70,7 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
                     break;
                 }
             }
-            if (exists)
-            {
-                return true;
-            }
-            return false;
+            return exists;
         }
-
-
     }
 }

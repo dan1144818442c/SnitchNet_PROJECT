@@ -41,7 +41,6 @@ namespace SnitchNet_PROJECT_9_6_25.DATA
                 return cmd.ExecuteReader(System.Data.CommandBehavior.CloseConnection);
             }
 
-
             private static List<Dictionary<string, object>> Parse(MySqlDataReader rdr)
             {
                 var rows = new List<Dictionary<string, object>>();

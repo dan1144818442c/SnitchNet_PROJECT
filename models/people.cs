@@ -17,7 +17,9 @@ namespace SnitchNet_PROJECT_9_6_25
         public int num_reports { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public People( string firstName, string lastName, string secret_code, string type, int num_mentions, int num_reports)
+        public People() { }
+
+        public People( string firstName, string lastName, string secret_code, string type = "clean", int num_mentions = 0, int num_reports = 0)
         {
             
             this.FirstName = firstName;
