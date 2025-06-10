@@ -46,7 +46,7 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.reports_DAL
             Main_DAL.Execute(sql);
         }
 
-        public static void update_report(int reportId, string newReportText)
+        public static void UpdateReport(int reportId, string newReportText)
         {
             string sql = $@"UPDATE reports 
                            SET ReportText = '{newReportText}' 
@@ -54,40 +54,50 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.reports_DAL
             Main_DAL.Execute(sql);
         }
 
-        public static async Task get_txt_report(People reporter, string report_text)
+        public static void GetTextReport(People reporter, string report_text, string firstName , string lastName)
         {
             People target  = new People();
-            (string firstName, string lastName) = StaticFunc.FindName_InText(report_text);
+            //(string firstName, string lastName) = StaticFunc.FindName_InText(report_text);
             if (!(StaticFunc.check_name(firstName, lastName)))
             {
-                Console.WriteLine($"enter secret code for {firstName + " " + lastName}");
-                string secret_code = Console.ReadLine();
+                string secret_code = StaticFunc.get_good_secret_code();
                 dal_people.add_people(firstName, lastName, secret_code, "target");
                 Console.WriteLine($"add  {firstName + " " + lastName} to DB ");
-                 target = dal_people.GetPeople_by_full_name_andCodeName(firstName, lastName, secret_code);
             }
-            if (target == null)
+            
+                
+            target = dal_people.GetPeople_by_full_name_andCodeName(firstName, lastName );
+               
+            if (!(StaticFunc.check_name(firstName, lastName)))
             {
-                target = dal_people.GetPeople_by_full_name_andCodeName(firstName, lastName);
+                dal_people.add_object_people(reporter);
+                Console.WriteLine($"add  {reporter.FirstName + " " + reporter.LastName} to DB ");
             }
+            People reporter_fromDB = dal_people.GetPeople_by_full_name_andCodeName(reporter.FirstName, reporter.LastName);
+            if (reporter_fromDB == null)
+            {
+                dal_people.add_people(reporter.FirstName, reporter.LastName, reporter.secret_code, "reporter", 0, 1);
+                Console.WriteLine("add good");
 
-            if (StaticFunc.check_have_id(reporter.id))
+            }
+            reporter = dal_people.GetPeople_by_full_name_andCodeName(reporter.FirstName, reporter.LastName);
+            if (StaticFunc.check_have_id(reporter.id) )
             {
                 dal_people.update_num_reports(reporter.id);
-
+                Console.WriteLine("update num report");
             }
             else
             {
                 dal_people.add_people(reporter.FirstName, reporter.LastName, reporter.secret_code, "reporter", 0, 1);
+                Console.WriteLine("add good");
             }
-            People reporter_with_id = dal_people.GetPeople_by_full_name_andCodeName(reporter.FirstName, reporter.LastName, reporter.secret_code);
-            await Task.Delay(1000); // Simulate some delay for async operation
 
+            People reporter_with_id = dal_people.GetPeople_by_full_name_andCodeName(reporter.FirstName, reporter.LastName);
+            
             add_report(reporter_with_id.id, target.id, report_text);
             dal_people.update_num_mentions(target.id);
 
-            Console.WriteLine("hhhhhhhhhhhh");
-            Console.ReadLine(); 
+        
 
         }
 

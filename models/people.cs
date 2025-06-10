@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using SnitchNet_PROJECT_9_6_25.DATA.people_DAL;
 namespace SnitchNet_PROJECT_9_6_25
 {
-    internal class People
+    public class People
     {
         public int id { get; set; }
         public string FirstName { get; set; }
@@ -31,6 +31,7 @@ namespace SnitchNet_PROJECT_9_6_25
             this.CreatedAt = DateTime.Now;
 
         }
+
 
 
 

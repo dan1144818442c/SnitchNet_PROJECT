@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
 {
-    // Renamed the class to avoid conflict with another definition of 'StaticFunc' in the same namespace.  
-    static class StaticFuncHelper
+    static class StaticFunc
     {
         public static bool check_name(string first_name, string last_name)
         {
@@ -22,8 +21,23 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
                     exists = true;
                     break;
                 }
+
             }
-            return exists;
+            if (exists)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public  static void check_name_and_upload_DB(string firstName , string lastName )
+        {
+            if (!(StaticFunc.check_name(firstName, lastName)))
+            {
+                string secret_code = StaticFunc.get_good_secret_code();
+                dal_people.add_people(firstName, lastName, secret_code, "target");
+                Console.WriteLine($"add  {firstName + " " + lastName} to DB ");
+            }
         }
 
         public static bool check_secet_code(string secret_code)
@@ -38,11 +52,16 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
                     break;
                 }
             }
-            return exists;
+            if (exists)
+            {
+                return true;
+            }
+            return false;
         }
 
         public static (string firstName, string lastName) FindName_InText(string text)
         {
+
             Regex regex = new Regex(@"\b[A-Z][a-z]+\s[A-Z][a-z]+\b");
             Match match = regex.Match(text);
 
@@ -56,6 +75,7 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
             {
                 return ("", "");
             }
+
         }
 
         public static bool check_have_id(int id)
@@ -70,7 +90,43 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
                     break;
                 }
             }
-            return exists;
+            if (exists)
+            {
+                return true;
+            }
+            Console.WriteLine("This ID does not exist in the database.");
+            return false;
         }
+
+        public static string get_good_secret_code(string secret_code = null) {
+            if (StaticFunc.check_secet_code(secret_code) || secret_code == null)
+            {
+                do
+                {
+                    Console.WriteLine("need to enter another secret code");
+                    secret_code = Console.ReadLine();
+                }
+                while ((StaticFunc.check_secet_code(secret_code)));
+            }
+
+            return secret_code;
+        }
+
+        public static People add_people()
+        {
+            string firstName, lastName, secret_code;
+            Console.WriteLine("Enter first name:");
+            firstName = Console.ReadLine();
+            Console.WriteLine("Enter last name:");
+            lastName = Console.ReadLine();
+            Console.WriteLine("Enter secret code:");
+            secret_code = Console.ReadLine();
+            People people = new People(firstName, lastName, secret_code);
+            return people;
+
+
+        }
+
     }
 }
+

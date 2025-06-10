@@ -1,0 +1,8 @@
+.vs/
+bin/
+obj/
+*.exe
+*.pdb
+*.cache
+log.txt
+*.csv

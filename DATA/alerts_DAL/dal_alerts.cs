@@ -1,93 +1,28 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using SnitchNet_PROJECT_9_6_25.models;
 
-namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
+namespace SnitchNet_PROJECT_9_6_25.DATA.alerst_DAL
 {
-    static class StaticFunc
+    internal class dal_alerts
     {
-        public static bool check_name(string first_name, string last_name)
+        public dal_alerts() { }
+
+        public static void add_alert(int target_id, DateTime windowStart, DateTime windowEnd, string reason)
         {
-            List<People> peopleList = dal_people.get_people();
-            bool exists = false;
-            foreach (People person in peopleList)
-            {
-                if (person.FirstName.Equals(first_name, StringComparison.OrdinalIgnoreCase) &&
-                    person.LastName.Equals(last_name, StringComparison.OrdinalIgnoreCase))
-                {
-                    exists = true;
-                    break;
-                }
+            alerts new_alert = new alerts(target_id, windowStart, windowEnd, reason);
 
-            }
-            if (exists)
-            {
-                return true;
-            }
-            return false;
+            string sql = $@"
+                INSERT INTO Alerts (TargetId, WindowStart, WindowEnd, Reason, CreatedAt)
+                VALUES ({new_alert.target_id}, 
+                        '{new_alert.WindowStart:yyyy-MM-dd HH:mm:ss}', 
+                        '{new_alert.WindowEnd:yyyy-MM-dd HH:mm:ss}', 
+                        '{new_alert.Reason}', 
+                        '{new_alert.CreatedAt:yyyy-MM-dd HH:mm:ss}');
+
+                SELECT LAST_INSERT_ID();";
+
+            var result = Main_DAL.Execute(sql);
+            
         }
-
-
-        public static bool check_secet_code(string secret_code)
-        {
-            List<People> peopleList = dal_people.get_people();
-            bool exists = false;
-            foreach (People person in peopleList)
-            {
-                if (person.secret_code.Equals(secret_code, StringComparison.OrdinalIgnoreCase))
-                {
-                    exists = true;
-                    break;
-                }
-            }
-            if (exists)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public static (string firstName, string lastName) FindName_InText(string text)
-        {
-
-            Regex regex = new Regex(@"\b[A-Z][a-z]+\s[A-Z][a-z]+\b");
-            Match match = regex.Match(text);
-
-            if (match.Success)
-            {
-                string fullName = match.Value;
-                string[] parts = fullName.Split(' ');
-                return (parts[0], parts[1]);
-            }
-            else
-            {
-                return ("", "");
-            }
-
-        }
-
-        public static bool check_have_id(int id)
-        {
-            List<People> peopleList = dal_people.get_people();
-            bool exists = false;
-            foreach (People person in peopleList)
-            {
-                if (person.id == id)
-                {
-                    exists = true;
-                    break;
-                }
-            }
-            if (exists)
-            {
-                return true;
-            }
-            return false;
-        }
-
-
     }
 }

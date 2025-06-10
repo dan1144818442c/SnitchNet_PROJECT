@@ -98,7 +98,11 @@
     <Compile Include="DATA\alerts_DAL\dal_alerts.cs" />
     <Compile Include="DATA\Main_DAL.cs" />
     <Compile Include="DATA\people_DAL\dal_people.cs" />
+    <Compile Include="DATA\people_DAL\StaticFunc.cs" />
     <Compile Include="DATA\reports_DAL\dal_reports.cs" />
+    <Compile Include="importCSV.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="Menu.cs" />
     <Compile Include="models\alerts.cs" />
     <Compile Include="models\people.cs" />
     <Compile Include="models\reports.cs" />
