@@ -54,50 +54,31 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.reports_DAL
             Main_DAL.Execute(sql);
         }
 
-        public static void GetTextReport(People reporter, string report_text, string firstName , string lastName)
+        public static void GetTextReport(People reporter, string report_text, string firstName, string lastName)
         {
-            People target  = new People();
+            People target = new People();
             //(string firstName, string lastName) = StaticFunc.FindName_InText(report_text);
-            if (!(StaticFunc.check_name(firstName, lastName)))
-            {
-                string secret_code = StaticFunc.get_good_secret_code();
-                dal_people.add_people(firstName, lastName, secret_code, "target");
-                Console.WriteLine($"add  {firstName + " " + lastName} to DB ");
-            }
-            
-                
-            target = dal_people.GetPeople_by_full_name_andCodeName(firstName, lastName );
-               
-            if (!(StaticFunc.check_name(firstName, lastName)))
-            {
-                dal_people.add_object_people(reporter);
-                Console.WriteLine($"add  {reporter.FirstName + " " + reporter.LastName} to DB ");
-            }
+
+            StaticFunc.check_name_and_upload_DB(firstName, lastName, "target");
+
+            target = dal_people.GetPeople_by_full_name_andCodeName(firstName, lastName);
+
+            StaticFunc.check_name_and_upload_DB(reporter.FirstName, reporter.LastName, "report");
+
+
             People reporter_fromDB = dal_people.GetPeople_by_full_name_andCodeName(reporter.FirstName, reporter.LastName);
-            if (reporter_fromDB == null)
-            {
-                dal_people.add_people(reporter.FirstName, reporter.LastName, reporter.secret_code, "reporter", 0, 1);
-                Console.WriteLine("add good");
 
-            }
-            reporter = dal_people.GetPeople_by_full_name_andCodeName(reporter.FirstName, reporter.LastName);
-            if (StaticFunc.check_have_id(reporter.id) )
-            {
-                dal_people.update_num_reports(reporter.id);
-                Console.WriteLine("update num report");
-            }
-            else
-            {
-                dal_people.add_people(reporter.FirstName, reporter.LastName, reporter.secret_code, "reporter", 0, 1);
-                Console.WriteLine("add good");
-            }
 
-            People reporter_with_id = dal_people.GetPeople_by_full_name_andCodeName(reporter.FirstName, reporter.LastName);
+            dal_people.update_num_reports(reporter_fromDB.id);
             
-            add_report(reporter_with_id.id, target.id, report_text);
-            dal_people.update_num_mentions(target.id);
+            Console.WriteLine("update  reporter");
 
-        
+            add_report(reporter_fromDB.id, target.id, report_text);
+            Console.WriteLine("add report to DB");
+            dal_people.update_num_mentions(target.id);
+            Console.WriteLine("update num mentions for target");
+
+
 
         }
 

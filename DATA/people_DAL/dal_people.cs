@@ -14,7 +14,7 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
         public static int add_people(string firstName, string lastName, string secret_code, string type = "clean", int num_mentions = 0, int num_reports = 0)
         {
 
-           
+
             if (StaticFunc.check_name(firstName, lastName))
             {
                 Console.WriteLine("This person already exists in the database.");
@@ -38,9 +38,9 @@ VALUES
 
         }
 
-        public static int  add_object_people(People new_people)
+        public static int add_object_people(People new_people)
         {
-            if (StaticFunc.check_name(new_people.FirstName , new_people.LastName))
+            if (StaticFunc.check_name(new_people.FirstName, new_people.LastName))
             {
                 Console.WriteLine("This person already exists in the database.");
                 return -1; // or throw an exception
@@ -55,7 +55,7 @@ VALUES
 '{new_people.CreatedAt:yyyy-MM-dd HH:mm:ss}')";
             Main_DAL.Execute(sql);
 
-            People people1 = GetPeople_by_full_name_andCodeName(new_people.FirstName, new_people.LastName , new_people.secret_code);
+            People people1 = GetPeople_by_full_name_andCodeName(new_people.FirstName, new_people.LastName, new_people.secret_code);
             return people1.id;
 
         }
@@ -150,13 +150,13 @@ VALUES
             string sql;
 
 
-           
-                sql = $@"
+
+            sql = $@"
         SELECT * FROM people 
         WHERE FirstName = '{firstname}' 
           AND ( LastName= '{last_name}')
           ";
-            
+
 
             var result = Main_DAL.Execute(sql);
             if (result.Count > 0)
@@ -188,41 +188,79 @@ VALUES
         }
         public static void update_num_mentions(int id)
         {
-            // Get the current number of mentions
             People people = GetPeople_by_id(id);
 
-            int current_num_mentions = people.num_mentions;
-            if (current_num_mentions == 0)
+            int new_num_mentions = people.num_mentions + 1;
+            string sqlMentions = $@"UPDATE people
+                           SET num_mentions = {new_num_mentions}
+                           WHERE id = {id}";
+            Main_DAL.Execute(sqlMentions);
+
+
+            people = GetPeople_by_id(id);
+
+            string current_type = people.type;
+            string new_calculated_type = current_type;
+
+            if (people.num_mentions > 0 && people.num_reports > 0)
             {
-                // If the current number of mentions is 0, set the type to "target"
-                update_Type(id, "target");
+                new_calculated_type = "both";
+            }
+            else if (people.num_mentions > 0 && people.num_reports == 0)
+            {
+                new_calculated_type = "target";
+            }
+            else if (people.num_mentions == 0 && people.num_reports > 0)
+            {
+                new_calculated_type = "reporter";
+            }
+            else
+            {
+                new_calculated_type = "clear";
             }
 
-            // Increment the number of mentions
-            int new_num_mentions = current_num_mentions + 1;
-            string sql2 = $@"UPDATE people 
-                            SET num_mentions = {new_num_mentions} 
-                            WHERE id = {id}";
-            Main_DAL.Execute(sql2);
+            if (new_calculated_type != current_type)
+            {
+                update_Type(id, new_calculated_type);
+            }
         }
 
         public static void update_num_reports(int id)
         {
-            // Get the current number of reports
             People people = GetPeople_by_id(id);
 
-            int current_num_reports = people.num_reports;
-            if (current_num_reports == 0)
+            int new_num_reports = people.num_reports + 1;
+            string sqlReports = $@"UPDATE people
+                           SET num_reports = {new_num_reports}
+                           WHERE id = {id}";
+            Main_DAL.Execute(sqlReports);
+
+            people = GetPeople_by_id(id);
+
+            string current_type = people.type;
+            string new_calculated_type = current_type;
+
+            if (people.num_mentions > 0 && people.num_reports > 0)
             {
-                // If the current number of reports is 0, set the type to "target"
-                update_Type(id, "reporter");
+                new_calculated_type = "both";
             }
-            // Increment the number of reports
-            int new_num_reports = current_num_reports + 1;
-            string sql2 = $@"UPDATE people 
-                            SET num_reports = {new_num_reports} 
-                            WHERE id = {id}";
-            Main_DAL.Execute(sql2);
+            else if (people.num_mentions > 0 && people.num_reports == 0)
+            {
+                new_calculated_type = "target";
+            }
+            else if (people.num_mentions == 0 && people.num_reports > 0)
+            {
+                new_calculated_type = "reporter";
+            }
+            else 
+            {
+                new_calculated_type = "clear";
+            }
+
+            if (new_calculated_type != current_type)
+            {
+                update_Type(id, new_calculated_type);
+            }
         }
     }
 

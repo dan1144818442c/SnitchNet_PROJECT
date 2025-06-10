@@ -30,12 +30,12 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
             return false;
         }
 
-        public  static void check_name_and_upload_DB(string firstName , string lastName )
+        public  static void check_name_and_upload_DB(string firstName , string lastName  , string type )
         {
             if (!(StaticFunc.check_name(firstName, lastName)))
             {
                 string secret_code = StaticFunc.get_good_secret_code();
-                dal_people.add_people(firstName, lastName, secret_code, "target");
+                dal_people.add_people(firstName, lastName, secret_code, type);
                 Console.WriteLine($"add  {firstName + " " + lastName} to DB ");
             }
         }
