@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Mysqlx;
 
@@ -307,6 +308,30 @@ VALUES
             }
             return "Unknown";
         }
+
+        public static void get_all_Recruit_Worthy_Reporters() {
+            string sql = @"SELECT reporter_id,
+       COUNT(*) AS report_count,
+       AVG(LEN(content)) AS avg_length
+FROM reports
+GROUP BY reporter_id
+HAVING COUNT(*) >= 3 AND AVG(LEN(content)) >= 100
+";
+            List < Dictionary<string, object> >  resulot = Main_DAL.Execute(sql);
+            List<int> List_id = new List<int>();
+            foreach (var row in resulot)
+            {
+
+                List_id.Add(Convert.ToInt32(row["ReporterId"]));
+            }
+            foreach (var id in List_id)
+            {
+                People p = dal_people.GetPeople_by_id(id);
+                Console.WriteLine(p.id + p.FirstName + p.LastName);
+            }
+
+        }
+
     }
 
 }
