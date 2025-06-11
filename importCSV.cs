@@ -49,11 +49,11 @@ namespace SnitchNet_PROJECT_9_6_25
                 string targetLastName = target.Split(' ')[1];
                 People targetPerson = new People(targetFirstName, targetLastName, "1", "target", 0, 0);
                 int targetId = dal_people.add_object_people(targetPerson);
-                
-                dal_reports.add_report(reporterId, targetId, text);
+                dal_reports.GetTextReport(reporterPerson, text, targetFirstName, targetLastName);
+                //dal_reports.add_report(reporterId, targetId, text);
                 count++;
-                
-                dal_alerts.add_alert(reporterId, ts, ts, text);
+               
+                //dal_alerts.add_alert(reporterId, ts, ts, text);
             }
             Logger.Log($"CSVImport: Imported {count} reports from {path}");
             Console.WriteLine($"Imported {count} reports.\n");

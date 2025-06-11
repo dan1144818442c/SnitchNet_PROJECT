@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mysqlx;
 
 namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
 {
@@ -14,16 +16,17 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.people_DAL
         public static int add_people(string firstName, string lastName, string secret_code, string type = "clean", int num_mentions = 0, int num_reports = 0)
         {
 
-
-            if (StaticFunc.check_name(firstName, lastName))
+            try
             {
-                Console.WriteLine("This person already exists in the database.");
-                return -1; // or throw an exception
-            }
-            secret_code = StaticFunc.get_good_secret_code(secret_code);
-            People new_people = new People(firstName, lastName, secret_code, type, num_mentions, num_reports);
+                if (StaticFunc.check_name(firstName, lastName))
+                {
+                    Console.WriteLine("This person already exists in the database.");
+                    return -1; // or throw an exception
+                }
+                secret_code = StaticFunc.get_good_secret_code(secret_code);
+                People new_people = new People(firstName, lastName, secret_code, type, num_mentions, num_reports);
 
-            string sql = $@"
+                string sql = $@"
 INSERT INTO people 
 (FirstName, LastName, secret_code, type, num_mentions, num_reports, CreatedAt) 
 VALUES 
@@ -31,10 +34,19 @@ VALUES
 '{new_people.type}', {new_people.num_mentions}, {new_people.num_reports}, 
 '{new_people.CreatedAt:yyyy-MM-dd HH:mm:ss}')";
 
-            Main_DAL.Execute(sql);
+                Main_DAL.Execute(sql);
 
-            People people = GetPeople_by_full_name_andCodeName(new_people.FirstName, new_people.LastName);
-            return people.id;
+                People people = GetPeople_by_full_name_andCodeName(new_people.FirstName, new_people.LastName);
+                Logger.Log($"add {people.FirstName} {people.LastName} to DB");
+
+                return people.id;
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("Error updating report: " + "add {people.FirstName} {people.LastName} to DB");
+                return -1;
+            }
 
         }
 
@@ -46,6 +58,7 @@ VALUES
                 return -1; // or throw an exception
 
             }
+            new_people.secret_code =  StaticFunc.get_good_secret_code(new_people.secret_code);
             string sql = $@"
 INSERT INTO people 
 (FirstName, LastName, secret_code, type, num_mentions, num_reports, CreatedAt) 
@@ -58,6 +71,14 @@ VALUES
             People people1 = GetPeople_by_full_name_andCodeName(new_people.FirstName, new_people.LastName, new_people.secret_code);
             return people1.id;
 
+        }
+
+        public static void update_status(int id, string newStatus)
+        {
+            string sql = $@"UPDATE people 
+                            SET status_ = '{newStatus}' 
+                            WHERE id = {id}";
+            Main_DAL.Execute(sql);
         }
 
         public static void Person_Identification()
@@ -218,7 +239,10 @@ VALUES
             {
                 new_calculated_type = "clear";
             }
-
+            if (new_num_mentions >= 20)
+            {
+                update_status(id, "dangerous");
+            }
             if (new_calculated_type != current_type)
             {
                 update_Type(id, new_calculated_type);
@@ -252,7 +276,7 @@ VALUES
             {
                 new_calculated_type = "reporter";
             }
-            else 
+            else
             {
                 new_calculated_type = "clear";
             }
@@ -261,6 +285,27 @@ VALUES
             {
                 update_Type(id, new_calculated_type);
             }
+        }
+
+        public static bool IS_status_dangerous(int id)
+        {
+            string status = check_status_(id);
+            return status == "dangerous";
+
+        }
+
+        public static string check_status_(int id)
+        {
+            string sql = $@"
+                SELECT status_ 
+                FROM people 
+                WHERE id = {id}";
+            var result = Main_DAL.Execute(sql);
+            if (result.Count > 0)
+            {
+                return result[0]["status_"].ToString();
+            }
+            return "Unknown";
         }
     }
 

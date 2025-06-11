@@ -17,9 +17,11 @@ namespace SnitchNet_PROJECT_9_6_25
         public int num_reports { get; set; }
         public DateTime CreatedAt { get; set; }
 
+        public string status_ { get; set; }  
+
         public People() { }
 
-        public People( string firstName, string lastName, string secret_code, string type = "clean", int num_mentions = 0, int num_reports = 0)
+        public People( string firstName, string lastName, string secret_code, string type = "clean", int num_mentions = 0, int num_reports = 0 , string status  = "clean")
         {
             
             this.FirstName = firstName;
@@ -29,9 +31,12 @@ namespace SnitchNet_PROJECT_9_6_25
             this.num_mentions = num_mentions;
             this.num_reports = num_reports;
             this.CreatedAt = DateTime.Now;
+            this.status_ = status;
+
 
         }
 
+       
 
 
 
