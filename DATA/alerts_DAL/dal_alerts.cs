@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using SnitchNet_PROJECT_9_6_25.DATA.people_DAL;
 using SnitchNet_PROJECT_9_6_25.DATA.reports_DAL;
@@ -83,10 +84,39 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.alerst_DAL
 
         }
 
+        public static List<alerts> all_alert_list()
+        {
+            List<alerts> all_alerts = new List<alerts>();
+            string sql = "SELECT * FROM ALERTS";
+            var result = Main_DAL.Execute(sql);
 
+            foreach (var row in result)
+            {
+                int id = Convert.ToInt32(row["Id"]);
+                int targetId = Convert.ToInt32(row["TargetId"]);
+                DateTime windowStart = Convert.ToDateTime(row["WindowStart"]);
+                DateTime windowEnd = Convert.ToDateTime(row["WindowEnd"]);
+                string reason = row["Reason"].ToString();
+                DateTime createdAt = Convert.ToDateTime(row["CreatedAt"]);
 
+                alerts new_alert = new alerts(targetId, windowStart, windowEnd, reason)
+                {
+                    id = id,
+                    CreatedAt = createdAt
+                };
 
+                all_alerts.Add(new_alert);
+            }
+
+            return all_alerts;
+        }
 
     }
+
+
+
+
+
 }
+
 

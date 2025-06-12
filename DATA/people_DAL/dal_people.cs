@@ -132,7 +132,8 @@ VALUES
                     type = row["type"].ToString(),
                     num_mentions = Convert.ToInt32(row["num_mentions"]),
                     num_reports = Convert.ToInt32(row["num_reports"]),
-                    CreatedAt = Convert.ToDateTime(row["CreatedAt"])
+                    CreatedAt = Convert.ToDateTime(row["CreatedAt"]),
+                    status_ = row.ContainsKey("status_") ? row["status_"].ToString() : "unknown"
                 };
                 peopleList.Add(person);
             }
@@ -310,28 +311,44 @@ VALUES
         }
 
         public static void get_all_Recruit_Worthy_Reporters() {
-            string sql = @"SELECT reporter_id,
+            string sql = @"SELECT ReporterId,
        COUNT(*) AS report_count,
-       AVG(LEN(content)) AS avg_length
+       AVG(CHAR_LENGTH(ReportText)) AS avg_length
 FROM reports
-GROUP BY reporter_id
-HAVING COUNT(*) >= 3 AND AVG(LEN(content)) >= 100
+GROUP BY ReporterId
+HAVING COUNT(*) >= 7 AND avg_length >= 10
 ";
-            List < Dictionary<string, object> >  resulot = Main_DAL.Execute(sql);
-            List<int> List_id = new List<int>();
+
+            List< Dictionary<string, object> >  resulot = Main_DAL.Execute(sql);
+            Dictionary<int , int> dict_id_num_rep = new Dictionary<int, int>();
+
             foreach (var row in resulot)
             {
 
-                List_id.Add(Convert.ToInt32(row["ReporterId"]));
+                dict_id_num_rep[(Convert.ToInt32(row["ReporterId"]))] = Convert.ToInt32(row["report_count"]);
             }
-            foreach (var id in List_id)
+            Console.WriteLine("---------------------------------------------------------------");
+            Console.WriteLine($"{"ID",-5} | {"First Name",-15} | {"Last Name",-15} | {"Reports",-8}");
+            Console.WriteLine("---------------------------------------------------------------");
+
+            foreach (KeyValuePair<int, int> pair in dict_id_num_rep)
             {
-                People p = dal_people.GetPeople_by_id(id);
-                Console.WriteLine(p.id + p.FirstName + p.LastName);
+                People p = dal_people.GetPeople_by_id(pair.Key);
+                Console.WriteLine($"{p.id,-5} | {p.FirstName,-15} | {p.LastName,-15} | {pair.Value,-8}");
             }
+
+            Console.WriteLine("---------------------------------------------------------------");
+
 
         }
 
+
+
+
+        //public static void get_all_people_with_detiles()
+        //{
+        //    string sql = "SELECT people.* , "
+        ////}
     }
 
 }

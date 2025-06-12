@@ -43,12 +43,13 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.reports_DAL
                 foreach (var row in rows)
                 {
                     reports report = new reports(
+
                         Convert.ToInt32(row["ReporterId"]),
                         Convert.ToInt32(row["TargetId"]),
                         row["ReportText"].ToString()
                     )
                     {
-                        id = Convert.ToInt32(row["id"]),
+                        id = Convert.ToInt32(row["Id"]),
                         SubmittedAt = Convert.ToDateTime(row["SubmittedAt"])
                     };
                     reportsList.Add(report);
@@ -180,6 +181,8 @@ namespace SnitchNet_PROJECT_9_6_25.DATA.reports_DAL
                 Logger.Log($"Error retrieving reports by Target ID {targetId}: get all report to list");
                 return new List<reports>();
             }
+
+
         }
 
 

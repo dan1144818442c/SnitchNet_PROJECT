@@ -24,11 +24,14 @@ namespace SnitchNet_PROJECT_9_6_25
             //Console.WriteLine(a + " " + b);
             //dal_reports.GetTextReport(new People("Jhgtsgtggdtgtdpffn", "Doegfbggxfeel", "1548554515"), "This is a test report for Dangie Rotlev." , "Dafrgsdfggggbdgfdgnie" , "levigvbbcf");
             //importCSV.ImportCsv();f
-            while (true)
-            {
+            //while (true)
+            //{
 
-                Menu.act_menu();
-            }
+            Menu.act_menu();
+
+            //}
+
+            //dal_people.get_all_Recruit_Worthy_Reporters();
         }
     }
 }
